@@ -161,6 +161,9 @@ Ir nuo dabar veiks docker start/stop komandos konteineriui django-project.
 * Perkonfigūruokite savo projekto konteinerį, kad `uwsgi` būtų paleidžiamas per `nginx` proxy.
 * Sukonfigūruokite Django projektą naudoti PostgresSQL duomenų bazę iš atskiro duomenų bazės konteinerio `postgres`. Tam reikės pakoreguoti projekto `settings.py`, taip pat į `requirements.txt` įtraukite `psycopg2-binary`.
 
+### Papildoma informacija Anglų kalba
+[Getting Started with Docker](https://docs.docker.com/get-started/)
+
 ---
 ## Docker Advanced (to be continued)
 
