@@ -1,0 +1,180 @@
+# DOCKER
+
+## Parsisiuntimas:
+https://docs.docker.com/get-docker/
+
+Windows ir Mac siunčiamės Desktop programą, kurią instaliuojame. Linux'ui naudojame serverinę komandinės eilutės versiją. 
+
+!!! Prieš instaliuojant Windows'uose, reikia susitvarkyti Windows Subsistemą Linux'ui. !!!
+
+### WSL2 (Windows Subsystem for Linux v2)
+
+* Atsidarome command prompt (cmd.exe) kaip administratorius
+
+    * Start/Search
+    * įrašome `cmd`
+    * Run as Administrator
+
+* Vykdome komandas, kurios įjungs pagal nutylėjimą neįjungtas Windows funkcijas Windows Subsystem for Linux ir virtualizaciją
+```
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+```
+```
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+```
+
+Jeigu nepavyko atlikti šių operacijų, reikia nueiti į BIOS ir įjungti virtualizaciją. Dažniausiai BIOS CPU skiltyje bus tokie pasirinkimai kaip SVT, Virtualization, Hyper-V. Reikia įjungti visas. Jeigu AMD Ryzen sistemose atsirado nestabilumas, išjunkite C-State Control. Dabar turėtų pavykti.
+
+* Atsisiunčiame WSL [atnaujinimą](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) ir jį instaliuojame
+
+* toliau vykdome komandą
+```
+wsl --set-default-version 2
+```
+
+* Instaliuojame [Ubuntu 20.04 iš Microsoft Store](https://www.microsoft.com/store/apps/9n6svws3rx71)
+
+* Perkrauname Kompiuterį
+
+---
+## Docker Desktop varotojo sąsaja
+
+Palengvina vizualiai valdyti docker'io container'ius, bet yra visiškai nereikalingas. Naudosime tik komandinę eilutę iš `cmd`.
+
+
+## Docker komponentai
+
+### Container (app)
+Darbinė virtuali aplinka, sukurta iš Docker Image (paveiksliuko), volume(s) - sąsajų su realiais failais ar direktorijomis jūsų tikroje failų sistemoje, ir savo egzistencijai naudojanti jūsų kompiuterio resursus, kaip procesorių, RAM, disko vietą, vaizdo plokštę, tinklo infrastruktūrą, ir t.t.
+
+### Image
+Paveiksliukas. Tai yra virtualios mašinos/operacinė sistemos produkcinis paveiksliukas, naujausia jo versija. Paveiksliuką galime parsisiųsti iš repozitorijos ir paleisti kaip konteinerį.
+
+### Volume
+Disko vieta, kurioje docker'is saugo konteinerio pokyčius tarp image ir container esamos būsenos. Per volume taip pat gali būti susieti duomenys (failai arba net visos direktorijos su subdirektorijomis) tarp konteinerio ir jūsų failų sistemos.
+
+---
+## Docker komandos
+
+Pagrindiniai veiksmai su Dockeriu atliekami per komandinę eilutę, naudojant `Docker Engine`. Vartotojo sąsaja Windows/Mac yra skirta tik patogiam konteinerių situacijos atvaizdavimui (kolkas).
+
+SVARBU: Komandų argumentai visada nurodomi prieš konteinerio pavadinimą, ypač komandose `run`, `start` ir `exec`.
+
+`docker help [komanda]` - svarbiausia komanda visame dockeryje - jos pagalba galėsite greitai gauti visų komandos parametrų aprašymą ir naudojimo taisykles.
+
+### Trys viename `pull`, `start`, `exec`
+
+`docker run --name [name] -it [image] [command]"` - taip pat galime perduoti papildomas komandas ar argumentus konteineriui. Pvz. `docker run --name "pytest" -it python:slim-buster bash` parsisiūs, instaliuos ir paleis naujausią `slim-buster` Linux distribucijos `python` `docker image` paveiksliuką ir sukurs standartinį konteinerį pavadinimu `pytest` iš to paveiksliuko. Naudojant parametrus `-it` galime paleisti konteinerį su interaktyvia komandine eilute.
+
+### Image parsisiuntimas, peržiūra, išmetimas
+
+`docker pull [image]` - atnaujins `docker image` į naujausią arba nurodytą versiją. Versiją galima nurodyti per dvitaškį po paveiksliuko pavadinimo, pvz. `docker pull python:latest`, arba `docker pull python:slim-buster`
+
+`docker images` - išspausdins jūsų sistemoje egzistuojančių paveiksliukų sąrašą, su esminiais parametrais, įskaitant disko resursų sunaudojimą.
+
+`docker rmi [image id]` - ištrina paveiksliuką ir visus su juo susijusius priklausomybių komponentus. Kad veiktų, paveiksliukas neturi būti naudojamas jokiuose aktyviuose konteineriuose
+
+### Konteinerių peržiūra, paleidimas/stabdymas ir išmetimas
+
+`docker ps` - išspausdina konteinerių sąrašą su esminiais parametrais, kaip paveiksliuko pavadinimas, paleista komanda, statusas. `-a` parametras leis matyti ir neaktyvius konteinerius.
+
+`docker rm [container name/id]` ištrina konteinerį.
+
+`docker start [container name/id]` - paleidžia konteinerį
+
+`docker stop [container name/id]` - sustabdo konteinerį
+
+`docker exec [container name/id] [command]` - įvykdo konteineryje komandą. pvz. `docker exec -it pytest bash`. Šiuo atveju `-it` nurodo, kad naudosime interaktyviai komandinę eilutę.
+
+### Failų kopijavimas į/iš konteinerio
+
+`docker cp [from] [to]` - kopijuoja failą iš vienos vietos į kitą. Gali kopijuoti failus tarp konteinerių, arba tarp jūsų failo sistemos ir konteinerio (į bet kurią pusę). Jeigu failas nurodomas konteineryje, konteinerio id/pavadinimą nurodome iki dvitaškio. pvz. `docker cp test.py pytest:/app/` nukopijuos `test.py` failą iš esamos direktorijos į konteinerio `pytest` direktoriją `/app`. Jeigu nurodome kelią be konteinerio pavadinimo (prieš dvitaškį), tai nurodytas kelias/failas yra imamas nuo esančios komandinės eilutės.
+
+---
+## Docker BuildKit
+
+Standartinis python konteinerio paveiksliukas (`image`) neveikia jo teisingai nesukonfigūravus, todėl mes turėsime naudoti BuildKit, kurio pagalba įkelsime savo programą į docker konteinerį, prieš jį paleisdami.
+
+Docker BuildKit yra pagal nutylėjimą įjungtas visose Docker Desktop distribiucijose. Docker Server distribiucijose mums jį reikia įjungti. Tai galima padaryti įtraukiant arba papildant `"features":{"buildkit":true}` faile `/etc/docker/daemon.json`. Pastaba: kad redaguoti failus `/etc/` kataloge reikia root teisių arba `sudo`.
+
+Išsirinkite bent vieną projektą, kurį naudosime. Rekomenduojame Django arba Flask projektą, kurį galima naudoti kaip serverį.
+
+### Dockerfile
+
+Atsidarykite projektą, jame sukurkite failą `Dockerfile` (tiesiog tokį, be extension).
+
+Pirmoje eilutėje visada įrašome nuorodą į tai, kokio interpretatoriaus reikės failui įvykdyti:
+
+```
+# syntax=docker/dockerfile:1
+```
+
+Nurodome, kokį bazinį paveiksliuką (`image`) naudosime.
+
+```
+FROM python:slim-buster
+```
+
+šis paveiksliukas jau turi viską, ko reikia mūsų pirmai Flask arba Django aplikacijai paleisti.
+
+Nustatoome kokiame kataloge leisime savo python projektą:
+
+```
+WORKDIR /app
+```
+
+Instrukcija nukopijuoti į konteinerį projekto failus:
+
+```
+COPY . .
+```
+
+Instrukcija paleisti vietinį konteinerio pip ir suinstaliuojame priklausomybes
+
+```
+RUN pip3 install -r requirements.txt
+```
+
+Ir paleidžiame Django (arba Flask savo nuožiūra) testinį serverį
+
+```
+WORKDIR /app/proejct
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+```
+
+Dabar galime surinkti savo konteinerį, `cmd` komandinėje eilutėje paleisdami:
+```
+docker build --tag django-app-project .
+```
+
+Dabar galime ir paleisti savo konteinerį - nepamirškime sukurti port forwarding'o (panašiai į NAT) savo konteineriui. Dabar pavyzdžiui nukreipsime iškart į `port 80`.
+```
+docker run -d -p 8000:80 --name django-project django-project
+```
+Galite atsidaryti savo projektą dabar naršyklėje.
+Ir nuo dabar veiks docker start/stop komandos konteineriui django-project.
+
+---
+## Užduotys
+
+* Sukurkite konteinerį savo Django projektui, naudodami ne runserver, o `uwsgi`. Nepamirškite `collectstatic`, taip pat įtraukite `uwsgi` į `requirements.txt`.
+* Perkonfigūruokite savo projekto konteinerį, kad `uwsgi` būtų paleidžiamas per `nginx` proxy.
+* Sukonfigūruokite Django projektą naudoti PostgresSQL duomenų bazę iš atskiro duomenų bazės konteinerio `postgres`. Tam reikės pakoreguoti projekto `settings.py`, taip pat į `requirements.txt` įtraukite `psycopg2-binary`.
+
+---
+## Docker Advanced (to be continued)
+
+* Čia eina Linux'o kursai
+
+* `Volumes` - sujungti kompiuterio failų sistemos direktoriją su konteineriu. Esant failų pakitimams sujungtų katalogų failuose, pokyčiai sinchronizuojami į abi puses.
+
+* `Networking` - virtualaus subneto sukūrimas dockerio įvairiems konteineriams (pvz. jūsų app'o, duomenų bazės ir web serverio) komunikuoti tarpusavyje.
+
+* Čia eina Django/Flask deploymento kursai, jei nepraeiti dar
+
+* `Compose` - skriptas konteinerių orkestravimui (`docker-compose.yml`)
+
+* Automatinis paleidimas Debian Linux'e (`systemd`)
+
+* CI/CD įgyvendinimas su GitHub.
+
