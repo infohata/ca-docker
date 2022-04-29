@@ -75,4 +75,6 @@ docker-compose down
 
 * Sukonfigūruokite kešavimo servisą su redis, ir įtraukite redis konteinerį į savo kompiziciją
 * Sukonfigūruokite produkcinę aplinką su `uwsgi` per proxy su `nginx` arba `apache`, ir pridėkite prie savo kompozicijos `nginx` arba `apache` konteinerius. Nepamirškite apache arba nginx konfigūracinių failų nukopijuoti į jų konteinerius, į kelius kur jiems priklauso būti, arba bent jau sudėti atitinkamus "symbolic links".
-
+* parašykite python skriptą, kuris neleistų vykdyti migracijų ir taip pat paleisti serviso (užlaikytų run veiksmų eigą), jeigu duomenų bazė nepasiekiama iš pagrindinio konteinerio.
+* pridėkite komandą, kuri kiekvieno paleidimo metu pabandytų surinkti statikos failus su `python manage.py collectstatic -y`, ir sukompiliuotų vertimus `... compilemessages`, jeigu projekte yra daugiakalbystė.
+* parašykite python skriptą, kuris automatiškai administruotų `logger` kuriamų failų archyvą - kompresuotų `.log` failus kasdien, išvalydamas einamųjų failų turinį, ir trintų senesnius nei mėnesio `.log` failų archyvus.
