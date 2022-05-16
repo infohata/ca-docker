@@ -15,6 +15,7 @@ Pirmoje eilutėje visada įrašome nuorodą į tai, kokio interpretatoriaus reik
 ```
 # syntax=docker/dockerfile:1
 ```
+Visual Code šitoje vietoje gali žymėti klaidą - nekreipkite dėmesio. Po sekančio skomandos susitvarkys.
 
 Nurodome, kokį bazinį paveiksliuką (`image`) naudosime.
 
@@ -45,8 +46,8 @@ RUN pip3 install -r requirements.txt
 Ir paleidžiame Django (arba Flask savo nuožiūra) testinį serverį
 
 ```
-WORKDIR /app/proejct
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+WORKDIR /app/project
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 ```
 
 Dabar galime surinkti savo konteinerį, `cmd` komandinėje eilutėje paleisdami:
@@ -56,7 +57,7 @@ docker build --tag django-app-project .
 
 Dabar galime ir paleisti savo konteinerį - nepamirškime sukurti port forwarding'o (panašiai į NAT) savo konteineriui. Dabar pavyzdžiui nukreipsime iškart į `port 80`.
 ```
-docker run -d -p 8000:80 --name django-project django-project
+docker run -d -p 80:8000 --name django-project django-app-project
 ```
 Galite atsidaryti savo projektą dabar naršyklėje.
 Ir nuo dabar veiks docker start/stop komandos konteineriui django-project.
