@@ -78,3 +78,7 @@ docker-compose down
 1. parašykite python skriptą, kuris neleistų vykdyti migracijų ir taip pat paleisti serviso (užlaikytų run veiksmų eigą), jeigu duomenų bazė nepasiekiama iš pagrindinio konteinerio.
 1. pridėkite komandą, kuri kiekvieno paleidimo metu pabandytų surinkti statikos failus su `python manage.py collectstatic -y`, ir sukompiliuotų vertimus `... compilemessages`, jeigu projekte yra daugiakalbystė.
 1. parašykite python skriptą, kuris automatiškai administruotų `logger` kuriamų failų archyvą - kompresuotų `.log` failus kasdien, išvalydamas einamųjų failų turinį, ir trintų senesnius nei mėnesio `.log` failų archyvus.
+
+---
+### Papildoma informacija Anglų kalba
+[Getting Started with Docker](https://docs.docker.com/get-started/)
