@@ -63,10 +63,24 @@ Galite atsidaryti savo projektą dabar naršyklėje.
 Ir nuo dabar veiks docker start/stop komandos konteineriui django-project.
 
 ---
+## gunicorn su Django
+
+Kad paleisti Django serverį produkcijai, tinkamiau yra naudoti ne pačio Django `runserver`, bet `gunicorn` web serverį. Tam reikia:
+
+- `pip install gunicorn`, taip pat nepamirškite atnaujinti priklausomybių failo (requirements.txt)
+- projekto `settings.py` turi būti sutvarkyti pilnai `STATIC` ir `MEDIA` parametrai, ir teisingai nurodyti `STATIC_ROOT` ir `MEDIA_ROOT`.
+- `Dockerfile` po `WORKDIR /app/project` pridedame eilutes, jeigu dar nepasidarėte, migracijoms ir statikai surinkti, ir pakeičiam CMD eilutę kad leistų `gunicorn` vietoj `runserver`:
+```
+RUN python manage.py -y collectstatic
+RUN python manage.py migrate
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "project.wsgi"]
+```
+
+---
 ## Užduotys
 
 1. Sukurkite konteinerį savo Django projektui, naudodami ne runserver, o `uwsgi`. Nepamirškite `collectstatic`, taip pat įtraukite `uwsgi` į `requirements.txt`.
-1. Perkonfigūruokite savo projekto konteinerį, kad `uwsgi` būtų paleidžiamas per `nginx` ar `apache` proxy. (reikia būti pabaigus Flask/Django deployment kursų dalį)
+1. Perkonfigūruokite savo projekto konteinerį, kad `gunicorn` būtų paleidžiamas per `nginx` arba `apache` proxy. (reikia būti pabaigus Flask/Django deployment kursų dalį)
 1. Sukonfigūruokite Django projektą naudoti PostgresSQL duomenų bazę iš atskiro duomenų bazės konteinerio `postgres`. Tam reikės pakoreguoti projekto `settings.py`, taip pat į `requirements.txt` įtraukite `psycopg2-binary`.
 
 ### Papildoma informacija Anglų kalba
