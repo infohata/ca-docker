@@ -71,7 +71,7 @@ Kad paleisti Django serverį produkcijai, tinkamiau yra naudoti ne pačio Django
 - projekto `settings.py` turi būti sutvarkyti pilnai `STATIC` ir `MEDIA` parametrai, ir teisingai nurodyti `STATIC_ROOT` ir `MEDIA_ROOT`.
 - `Dockerfile` po `WORKDIR /app/project` pridedame eilutes, jeigu dar nepasidarėte, migracijoms ir statikai surinkti, ir pakeičiam CMD eilutę kad leistų `gunicorn` vietoj `runserver`:
 ```
-RUN python manage.py collectstatic -y
+RUN python manage.py collectstatic --noinput
 RUN python manage.py migrate
 CMD ["gunicorn", "-b", "0.0.0.0:8000", "project.wsgi"]
 ```
