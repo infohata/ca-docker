@@ -12,14 +12,14 @@ Atsidarykite projektą, jame sukurkite failą `Dockerfile` (tiesiog tokį, be ex
 
 Pirmoje eilutėje visada įrašome nuorodą į tai, kokio interpretatoriaus reikės failui įvykdyti:
 
-```
+``` Dockerfile
 # syntax=docker/dockerfile:1
 ```
 Visual Code šitoje vietoje gali žymėti klaidą - nekreipkite dėmesio. Po sekančio skomandos susitvarkys.
 
 Nurodome, kokį bazinį paveiksliuką (`image`) naudosime.
 
-```
+``` Dockerfile
 FROM python:slim-buster
 ```
 
@@ -27,36 +27,37 @@ FROM python:slim-buster
 
 Nustatoome kokiame kataloge leisime savo python projektą:
 
-```
+``` Dockerfile
 WORKDIR /app
 ```
 
-Instrukcija nukopijuoti į konteinerį projekto failus:
+Instrukcija nukopijuoti į konteinerį projekto failus, kur projekto katalogo pavadinimas šiuo atveju yra `project`. Pakeiskite `project` į savo projekto pavadinimą:
 
-```
-COPY . .
+``` Dockerfile
+COPY ./project .
+COPY ./requirements.txt .
 ```
 
 Instrukcija paleisti vietinį konteinerio pip ir suinstaliuojame priklausomybes
 
-```
+``` Dockerfile
 RUN pip3 install -r requirements.txt
 ```
 
 Ir paleidžiame Django (arba Flask savo nuožiūra) testinį serverį
 
-```
+``` Dockerfile
 WORKDIR /app/project
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 ```
 
 Dabar galime surinkti savo konteinerį, `cmd` komandinėje eilutėje paleisdami:
-```
+``` bash
 docker build --tag django-app-project .
 ```
 
 Dabar galime ir paleisti savo konteinerį - nepamirškime sukurti port forwarding'o (panašiai į NAT) savo konteineriui. Dabar pavyzdžiui nukreipsime iškart į `port 80`.
-```
+``` bash
 docker run -d -p 80:8000 --name django-project django-app-project
 ```
 Galite atsidaryti savo projektą dabar naršyklėje.
@@ -70,7 +71,8 @@ Kad paleisti Django serverį produkcijai, tinkamiau yra naudoti ne pačio Django
 - `pip install gunicorn`, taip pat nepamirškite atnaujinti priklausomybių failo (requirements.txt)
 - projekto `settings.py` turi būti sutvarkyti pilnai `STATIC` ir `MEDIA` parametrai, ir teisingai nurodyti `STATIC_ROOT` ir `MEDIA_ROOT`.
 - `Dockerfile` po `WORKDIR /app/project` pridedame eilutes, jeigu dar nepasidarėte, migracijoms ir statikai surinkti, ir pakeičiam CMD eilutę kad leistų `gunicorn` vietoj `runserver`:
-```
+
+``` Dockerfile
 RUN python manage.py collectstatic --noinput
 RUN python manage.py migrate
 CMD ["gunicorn", "-b", "0.0.0.0:8000", "project.wsgi"]
@@ -79,9 +81,8 @@ CMD ["gunicorn", "-b", "0.0.0.0:8000", "project.wsgi"]
 ---
 ## Užduotys
 
-1. Sukurkite konteinerį savo Django projektui, naudodami ne runserver, o `uwsgi`. Nepamirškite `collectstatic`, taip pat įtraukite `uwsgi` į `requirements.txt`.
-1. Perkonfigūruokite savo projekto konteinerį, kad `gunicorn` būtų paleidžiamas per `nginx` arba `apache` proxy. (reikia būti pabaigus Flask/Django deployment kursų dalį)
-1. Sukonfigūruokite Django projektą naudoti PostgresSQL duomenų bazę iš atskiro duomenų bazės konteinerio `postgres`. Tam reikės pakoreguoti projekto `settings.py`, taip pat į `requirements.txt` įtraukite `psycopg2-binary`.
+1. Sukurkite konteinerį savo kitam Django projektui, naudodami ne runserver, o `uwsgi`. Nepamirškite `collectstatic`, taip pat įtraukite `uwsgi` į `requirements.txt`.
+1. Sukonfigūruokite Django projektą naudoti PostgresSQL duomenų bazę iš atskiro duomenų bazės konteinerio `postgres`. Tam reikės pakoreguoti projekto `settings.py`, taip pat į `requirements.txt` įtraukite `psycopg2-binary`. [Daugiau informacijos apie duomenų bazes](https://docs.djangoproject.com/en/4.0/ref/databases/#postgresql-connection-settings-1). 
 
 ---
 ### Papildoma informacija Anglų kalba

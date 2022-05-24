@@ -1,3 +1,91 @@
+# Diegimas su atskiru nginx konteineriu
+
+Norėdami teisingai įdiegti projektą su nginx, rekomenduojame naudoti oficialų nginx konteinerį. Tam rekomenduojame "surinkti" savo konfigūracijos nginx konteinerį, į jį perduodant savo projektų .conf failą. Jeigu serveryje leisite tik vieną projektą - tiesiog perrašysime savo konfigūracijos failu `/etc/nginx/conf.d/default.conf` failą. Čia pateikiamas pavyzdinis projekto `project.conf` failas, kurį galite prie projekto pasidėti `nginx` kataloge.
+
+``` sh
+# aprašome savo projekto backend'o upstream, kurį aptarnaus projekto gunicorn. Čia host turi sutapti su vėliau konfigūruojamu docker-compose python konteinerio sufiksu, kuris šio kurso atveju nustatytas kaip `dev`:
+upstream project-backend {
+    server dev:8000;
+}
+
+server {
+    # nustatome domain name, kuriuo bus galima kreiptis į serverį. Django settings ALLOWED_HOSTS sąraše turi būti įtrauktas šis domenas.
+    server_name project.local;
+
+    # nurodome kur padėsime Django static katalogą
+    location /static/ {
+	      alias /app/static/;
+    }
+
+    # nurodome kur padėsime Django media katalogą
+    location /media/ {
+        alias /app/media/;
+    }
+
+    # leidžiame per URL siųstis failus, jeigu jie randami pagal URI.
+    location / {
+        try_files $uri @proxy_to_wsgi;
+    }
+
+    # perrašome URI pagal Django/gunicorn taisykles, kurios tiesiog aklai nukopijuotos nuo Django rekomendacijų.
+    location @proxy_to_wsgi {
+        uwsgi_param  QUERY_STRING       $query_string;
+        uwsgi_param  REQUEST_METHOD     $request_method;
+        uwsgi_param  CONTENT_TYPE       $content_type;
+        uwsgi_param  CONTENT_LENGTH     $content_length;
+
+        uwsgi_param  REQUEST_URI        $request_uri;
+        uwsgi_param  PATH_INFO          $document_uri;
+        uwsgi_param  DOCUMENT_ROOT      $document_root;
+        uwsgi_param  SERVER_PROTOCOL    $server_protocol;
+        uwsgi_param  REQUEST_SCHEME     $scheme;
+        uwsgi_param  HTTPS              $https if_not_empty;
+
+        uwsgi_param  REMOTE_ADDR        $remote_addr;
+        uwsgi_param  REMOTE_PORT        $remote_port;
+        uwsgi_param  SERVER_PORT        $server_port;
+        uwsgi_param  SERVER_NAME        $server_name;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $server_name;
+
+        # šioje vietoje nurodome kur yra mūsų gunicorn servisas - turi sutapti su upstream
+        proxy_pass http://dev:8000;
+    }
+
+    # laukiame užklausų 80 portu (http). Jeigu naudotume SSL/TLS sertifikatą, jį sukonfigūruotume 443 porte su `ssl` sufiksu ir nurodytume kur ieškoti sertifikatų - pavyzdys žemiau. 
+    listen 80;
+    # listen 443 ssl; # managed by Certbot
+    # ssl_certificate /etc/letsencrypt/live/project.local/fullchain.pem; # managed by Certbot
+    # ssl_certificate_key /etc/letsencrypt/live/project.local/privkey.pem; # managed by Certbot
+    # include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    # ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+
+# server {
+#     if ($host = miracle.endless.pro) {
+#         return 301 https://$host$request_uri;
+#     } # managed by Certbot
+
+#     server_name project.local;
+#     listen 80;
+#     return 404; # managed by Certbot
+# }
+```
+
+Dabar savo projekto `nginx` kataloge sukuriam `Dockerfile`, kuriame nurodysime instrukcijas nuosavo `nginx` paveiksliuko sukūrimui, į kurį sudėsime savo projekto `.conf` konfigūraciją.
+
+``` Dockerfile
+# syntax=docker/dockerfile:1
+FROM nginx:latest
+COPY ./project.conf /etc/nginx/conf.d/default.conf
+```
+
 # Docker Compose
 
 Docker compose yra įrankis, skirtas kompleksiškam docker konteinerių sprendimui orkestruoti - tiek konteinerių sukūrimui, tiek paleidimui ir valdymui. `docker-compose.yml` faile yra sukonfigūruojamas visas veikimo aplinkos ciklas - nuo konteinerių sukūrimo, iki paleidimo ir uždarymo. Konteinerių priklausomybės, tinklas, aplinkos savybės (`environment variables`) ir visa kita aprašomos čia.
@@ -14,36 +102,40 @@ services:       # services yra konteinerių sąrašas
     # build komanda nudorome, kad iš kuriame kataloge (šiuo atveju iš esančio katalogo, .) esančio Dockerfile statyti konteinerį
     build: .
     # paveiksliuko (docker image) pavadinimas
-    image: projektas:dev
+    image: project:dev
     # konteinerio pavadinimas
-    container_name: projektas.dev
+    container_name: project.dev
     # parametras tty nurodo, ar konteineris gali naudotis linux subsistemos serijinės sąsajos TeleTYpewriter savybėmis, kurių iš esmės reikia komandinei eilutei funkcionuoti. Tuo pačiu atidarom ir stdin - komandinės eilutės įvedimo funkciją, kurią gali tekti prireikti naudoti pvz. su python input() funkcija.
     tty: true
     stdin_open: true
     # restart komanda nurodo sąlygas, kada perkrauti konteinerį jam išsijungus. Produkcinėje aplinkoje tai turėtų būti always. 
     restart: always
-    # kokias komandas vykdyti paleidžiant konteinerį
-    command: >
-      bash -c "./projektas/manage.py migrate &&
-               ./projektas/manage.py runserver 0.0.0.0:8000"
-    # tinklo konfigūracija
+    # kokias komandas vykdyti paleidžiant konteinerį. Šios eilutės nereikia, jeigu Dockerfile yra COMMAND.
+    # command: >
+    #   bash -c "./projektas/manage.py migrate &&
+    #            ./projektas/manage.py runserver 0.0.0.0:8000"
+    # # tinklo konfigūracija
     ports:
       - 8000:8000
-    # volumes - disko sąsaja. Nerekomenduojame naudoti su Windows'ais.
+    # volumes - disko sąsaja, kur konteineris sinchronizuos savo failus su realiais diske esančiais failais. Šių failų nereikės kopijuoti su cp. Taip pat panašiai sinchronizuosime ir `static` bei `media` katalogus su nginx konteineriu.
     volumes:
-      - .:/app
+      - ./project:/app
     # priklausomybės - kurie konteineriai turėtu būti paleisti, paleidžiant šį konteinerį.
     depends_on:
       - db
+    # pervadiname db konteinerio host lokaliame projekto tinkle. Nepamirškite duomenų bazės konfigūracijos faile nurodyti `host=postgres` vietoj `host=localhost`
+    links:
+      - db:postgres
     # aplinkos savybės (environment variables)
     environment:
       PYTHONIOENCODING: UTF-8
-      DJANGO_SETTINGS_MODULE: projektas.settings
+      # jeigu naudojate kitą settings failą, galite nuorodą į jį pakeisti čia.
+      # DJANGO_SETTINGS_MODULE: projektas.settings
   db:           # Duomenų bazės konteineris
     # naudosime standartinį postgres image
     image: postgres
     # konteinerio pavadinimas
-    container_name: projektas.db
+    container_name: project.db
     restart: always
     ports:
       - 5432:5432
@@ -51,17 +143,37 @@ services:       # services yra konteinerių sąrašas
       - ./dbdata:/var/lib/postgresql/data
     # nurodžius environment'e duomenų bazės parametrus, nauajs postgres konteineris šiais kredencialais sukurs tuščią duomenų bazę. Produkcinėje aplinkoje siūlytume nenurodyti, arba pakeisti čia nustatytus.
     environment:
-      POSTGRES_DB: projektas
-      POSTGRES_USER: projektas
+      POSTGRES_DB: project
+      POSTGRES_USER: project
       POSTGRES_PASSWORD: nesakysiu
       POSTGRES_PORT: 5432
+  nginx:           # Nginx konteineris
+    # surenkame nginx konteinerį su mūsų projekto .conf
+    build: ./nginx/
+    # savo surinkto nginx image paveiksliuko pavadinimas ir tagas
+    image: nginx:project
+    # konteinerio pavadinimas
+    container_name: project.nginx
+    # jeigu konteineris pakibtų, jį visada perkrausime
+    restart: always
+    # kokius portus atidaryti - jeigu reikia, įtraukite ir SSL
+    ports:
+      - 80:80
+      # - 443:443
+    # nurodome tinklo sąsają su pagrindiniu projekto konteineriu `dev`.
+    links:
+      - dev:dev
+    # sinchronizuojame failus tarp konteinerio ir projekto `static` ir `media` katalogų. Šiuo atveju, netgi padarius `python manage.py collectstatic` iš projekto `dev` konteinerio, `nginx` konteineryje atitinkami failai taip pat atsinaujins.
+    volumes:
+      - ./project/media:/app/media
+      - ./project/static:/app/static
 ```
 
 ---
 ## Docker compose valdymo komandos
-Kad paleisti savo docker'io kompoziciją, naudojame komandą `docker-compose up` su argumentu `-d`, kad paleisti kaip foninį servisą (daemon).
+Kad paleisti savo docker'io kompoziciją, naudojame komandą `docker-compose up` su argumentu `-d`, kad paleisti kaip foninį servisą (daemon). Kol neįsitikinote kad veikia,  atskiroje komandinėje eilutėje paleiskite docker-compose be `-d` parametro, kad matytumėte kas neveikia.
 ```
-docker compose up -d
+docker-compose up -d
 ```
 
 Lygiai taip pat galime naudoti subkomandas `down` ir `restart`, pvz.:

@@ -96,13 +96,16 @@ SVARBU: Komandų argumentai visada nurodomi prieš konteinerio pavadinimą, ypa�
 Užduotims įvykdyti turi būti pabaigtas Linux pradmenų kursas, arba bent jau įsisavinta Linux pradmenų kurso teorija.
 
 1. Sukurkite naują `python` konteinerį, nauju pavadinimu
-   * paleiskite parsisiųstą konteinerį
-   * susiinstaliuokite jame su `apt` trūkstamus įrankius tokius kaip teksto redaktoriu (`nano` ar kitą)
-   * sukurkite `python` konteineryje `/app` katalogą, jame sukurkite kelis `.py` failus ir paeksperimentuokite
+   * paleiskite parsisiųstą konteinerį;
+   * susiinstaliuokite jame su `apt` trūkstamus įrankius tokius kaip teksto redaktoriu (`nano` ar kitą);
+   * sukurkite `python` konteineryje `/app` katalogą, jame sukurkite kelis `.py` failus ir paeksperimentuokite;
    
    Pastaba: jeigu norite sukurti `virtualenv`, reikalingus `virtualenv` python modulius rasite `apt` repozitorijose. Aktyvavimas `venv/bin/activate` - kiek kitaip nei Windows'uose.
 
 1. Nukopijuokite į naują konteinerį savo Flask ar Django projektą, paleiskite jį, pakoreguokite konteinerio paleidimą, kad startuotų kaip `daemon` (kaip foninis servisas) su raktu `-d`, ir priskirkite IP portą su raktu `-p 5000:80`. Čia pirmas skaičius yra portas atidarytas konteineryje, o antras skaičius nurodo, į kurį portą nukreipti jūsų kompiuteryje.
+
+1. Išbandykite nostalgiją - susiinstaliuokite MC. `apt install mc`;
+
 
 ---
 ### Papildoma informacija Anglų kalba
