@@ -171,6 +171,12 @@ services:       # services yra konteinerių sąrašas
 
 ---
 ## Docker compose valdymo komandos
+
+Surenkame kompoziciją:
+``` bash
+docker-compose build
+```
+
 Kad paleisti savo docker'io kompoziciją, naudojame komandą `docker-compose up` su argumentu `-d`, kad paleisti kaip foninį servisą (daemon). Kol neįsitikinote kad veikia,  atskiroje komandinėje eilutėje paleiskite docker-compose be `-d` parametro, kad matytumėte kas neveikia.
 ```
 docker-compose up -d
