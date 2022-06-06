@@ -25,6 +25,8 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 
 Jeigu nepavyko atlikti šių operacijų, reikia nueiti į BIOS ir įjungti virtualizaciją. Dažniausiai BIOS CPU skiltyje bus tokie pasirinkimai kaip SVT, Virtualization, Hyper-V. Reikia įjungti visas. Jeigu AMD Ryzen sistemose atsirado nestabilumas, išjunkite C-State Control. Dabar turėtų pavykti.
 
+Padarius šiuos veiksmus perkraukite kompiuterį.
+
 * Atsisiunčiame WSL [atnaujinimą](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) ir jį instaliuojame
 
 * toliau vykdome komandą
