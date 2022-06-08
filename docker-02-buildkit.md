@@ -81,9 +81,7 @@ CMD ["gunicorn", "-b", "0.0.0.0:8000", "project.wsgi"]
 ---
 ## Užduotys
 
-1. Sukurkite konteinerį savo kitam Django projektui, naudodami ne runserver, o `uwsgi`. Nepamirškite `collectstatic`, taip pat įtraukite `uwsgi` į `requirements.txt`.
-1. Sukonfigūruokite Django projektą naudoti PostgresSQL duomenų bazę iš atskiro duomenų bazės konteinerio `postgres`. Tam reikės pakoreguoti projekto `settings.py`, taip pat į `requirements.txt` įtraukite `psycopg2-binary`. [Daugiau informacijos apie duomenų bazes](https://docs.djangoproject.com/en/4.0/ref/databases/#postgresql-connection-settings-1). 
-
+1. Sukurkite konteinerį savo kitam Django projektui, naudodami ne runserver, o `gunicorn` arba `uwsgi`. Nepamirškite `collectstatic` ir įtraukti `gunicorn` ar `uwsgi` į `requirements.txt`.
 ---
 ### Papildoma informacija Anglų kalba
 [Getting Started with Docker](https://docs.docker.com/get-started/)
