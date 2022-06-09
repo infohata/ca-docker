@@ -148,6 +148,9 @@ services:       # services yra konteinerių sąrašas
 ```
 
 Kad veiktų nurodytas domenas (http://project.local/) - reikia jį įsidėti į hosts failą. Windows'uose dažniausiai būna `C:\Windows\System32\drivers\etc\hosts`.
+``` hosts
+127.0.0.1 project.local
+```
 
 ---
 ## Docker compose valdymo komandos
