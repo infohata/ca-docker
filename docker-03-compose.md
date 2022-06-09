@@ -5,7 +5,7 @@ Norėdami teisingai įdiegti projektą su nginx, rekomenduojame naudoti oficial�
 ``` sh
 # aprašome savo projekto backend'o upstream, kurį aptarnaus projekto gunicorn. Čia host turi sutapti su vėliau konfigūruojamu docker-compose python konteinerio sufiksu, kuris šio kurso atveju nustatytas kaip `dev`:
 upstream project-backend {
-    server dev:8000;
+    server project:8000;
 }
 
 server {
@@ -55,7 +55,7 @@ server {
         proxy_set_header X-Forwarded-Host $server_name;
 
         # šioje vietoje nurodome kur yra mūsų gunicorn servisas - turi sutapti su upstream
-        proxy_pass http://dev:8000;
+        proxy_pass http://project:8000;
     }
 
     # laukiame užklausų 80 portu (http). Jeigu naudotume SSL/TLS sertifikatą, jį sukonfigūruotume 443 porte su `ssl` sufiksu ir nurodytume kur ieškoti sertifikatų - pavyzdys žemiau. 
@@ -120,33 +120,11 @@ services:       # services yra konteinerių sąrašas
     # volumes - disko sąsaja, kur konteineris sinchronizuos savo failus su realiais diske esančiais failais. Šių failų nereikės kopijuoti su cp. Taip pat panašiai sinchronizuosime ir `static` bei `media` katalogus su nginx konteineriu.
     volumes:
       - ./project:/app
-    # priklausomybės - kurie konteineriai turėtu būti paleisti, paleidžiant šį konteinerį.
-    depends_on:
-      - db
-    # pervadiname db konteinerio host lokaliame projekto tinkle. Nepamirškite duomenų bazės konfigūracijos faile nurodyti `host=postgres` vietoj `host=localhost`
-    links:
-      - db:postgres
-    # aplinkos savybės (environment variables)
-    environment:
-      PYTHONIOENCODING: UTF-8
-      # jeigu naudojate kitą settings failą, galite nuorodą į jį pakeisti čia.
-      # DJANGO_SETTINGS_MODULE: projektas.settings
-  db:           # Duomenų bazės konteineris
-    # naudosime standartinį postgres image
-    image: postgres
-    # konteinerio pavadinimas
-    container_name: project.db
-    restart: always
-    ports:
-      - 5432:5432
-    volumes:
-      - ./dbdata:/var/lib/postgresql/data
-    # nurodžius environment'e duomenų bazės parametrus, nauajs postgres konteineris šiais kredencialais sukurs tuščią duomenų bazę. Produkcinėje aplinkoje siūlytume nenurodyti, arba pakeisti čia nustatytus.
-    environment:
-      POSTGRES_DB: project
-      POSTGRES_USER: project
-      POSTGRES_PASSWORD: nesakysiu
-      POSTGRES_PORT: 5432
+    # vykdome komandas startuojant konteineriui, o ne konstruojant to konteinerio paveiksliuką (image). Rekomenduojame šias komandas iš Dockerfile pašalinti arba užkomentuoti.
+    command: >
+    bash -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn library.wsgi --bind 0.0.0.0:8000"
   nginx:           # Nginx konteineris
     # surenkame nginx konteinerį su mūsų projekto .conf
     build: ./nginx/
@@ -162,12 +140,14 @@ services:       # services yra konteinerių sąrašas
       # - 443:443
     # nurodome tinklo sąsają su pagrindiniu projekto konteineriu `dev`.
     links:
-      - dev:dev
+      - dev:project
     # sinchronizuojame failus tarp konteinerio ir projekto `static` ir `media` katalogų. Šiuo atveju, netgi padarius `python manage.py collectstatic` iš projekto `dev` konteinerio, `nginx` konteineryje atitinkami failai taip pat atsinaujins.
     volumes:
       - ./project/media:/app/media
       - ./project/static:/app/static
 ```
+
+Kad veiktų nurodytas domenas (http://project.local/) - reikia jį įsidėti į hosts failą. Windows'uose dažniausiai būna `C:\Windows\System32\drivers\etc\hosts`.
 
 ---
 ## Docker compose valdymo komandos
@@ -178,12 +158,12 @@ docker-compose build
 ```
 
 Kad paleisti savo docker'io kompoziciją, naudojame komandą `docker-compose up` su argumentu `-d`, kad paleisti kaip foninį servisą (daemon). Kol neįsitikinote kad veikia,  atskiroje komandinėje eilutėje paleiskite docker-compose be `-d` parametro, kad matytumėte kas neveikia.
-```
+``` bash
 docker-compose up -d
 ```
 
 Lygiai taip pat galime naudoti subkomandas `down` ir `restart`, pvz.:
-```
+``` bash
 docker-compose restart
 docker-compose down
 ```
