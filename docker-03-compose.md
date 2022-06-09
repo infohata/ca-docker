@@ -1,6 +1,14 @@
 # Diegimas su atskiru nginx konteineriu
 
-Norėdami teisingai įdiegti projektą su nginx, rekomenduojame naudoti oficialų nginx konteinerį. Tam rekomenduojame "surinkti" savo konfigūracijos nginx konteinerį, į jį perduodant savo projektų .conf failą. Jeigu serveryje leisite tik vieną projektą - tiesiog perrašysime savo konfigūracijos failu `/etc/nginx/conf.d/default.conf` failą. Čia pateikiamas pavyzdinis projekto `project.conf` failas, kurį galite prie projekto pasidėti `nginx` kataloge.
+Dabar savo projekte sukuriame `nginx` katalogą, jame sukuriame  `Dockerfile`, kuriame nurodysime instrukcijas nuosavo `nginx` paveiksliuko sukūrimui, į kurį sudėsime savo projekto `.conf` konfigūraciją.
+
+``` Dockerfile
+# syntax=docker/dockerfile:1
+FROM nginx:latest
+COPY ./project.conf /etc/nginx/conf.d/default.conf
+```
+
+Norėdami teisingai įdiegti projektą su nginx, rekomenduojame naudoti oficialų nginx konteinerio paveiksliuką. Tam rekomenduojame "surinkti" savo konfigūracijos nginx paveiksliuką, į jį perduodant savo projekto .conf failą. Jeigu serveryje leisite tik vieną projektą - tiesiog perrašysime savo konfigūracijos failu `/etc/nginx/conf.d/default.conf` failą. Čia pateikiamas pavyzdinis projekto `project.conf` failas, kurį galite prie projekto pasidėti `nginx` kataloge.
 
 ``` sh
 # aprašome savo projekto backend'o upstream, kurį aptarnaus projekto gunicorn. Čia host turi sutapti su vėliau konfigūruojamu docker-compose python konteinerio sufiksu, kuris šio kurso atveju nustatytas kaip `dev`:
@@ -76,14 +84,6 @@ server {
 #     listen 80;
 #     return 404; # managed by Certbot
 # }
-```
-
-Dabar savo projekto `nginx` kataloge sukuriam `Dockerfile`, kuriame nurodysime instrukcijas nuosavo `nginx` paveiksliuko sukūrimui, į kurį sudėsime savo projekto `.conf` konfigūraciją.
-
-``` Dockerfile
-# syntax=docker/dockerfile:1
-FROM nginx:latest
-COPY ./project.conf /etc/nginx/conf.d/default.conf
 ```
 
 # Docker Compose
