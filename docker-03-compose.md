@@ -14,7 +14,7 @@ server {
 
     # nurodome kur padėsime Django static katalogą
     location /static/ {
-	      alias /app/static/;
+	alias /app/static/;
     }
 
     # nurodome kur padėsime Django media katalogą
