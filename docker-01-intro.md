@@ -37,7 +37,7 @@ wsl --set-default-version 2
 * Instaliuojame [Ubuntu 20.04 iš Microsoft Store](https://www.microsoft.com/store/apps/9n6svws3rx71)
 Alternatyviai, komandinėje eilutėje galime įrašyti:
 ```
-wsl --install -d Ubuntu 20.04
+wsl --install -d Ubuntu-20.04
 ```
 
 Susikurkite savo vartotojo vardą ir slaptažodį.
