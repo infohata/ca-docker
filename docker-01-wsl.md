@@ -35,7 +35,7 @@ wsl --set-default-version 2
 * Instaliuojame Pasirinktą Linux operacinę sistemą. Šiam kursui naudojame Ubuntu 20.04, bet galite pasirinkti ir kitą distribuciją (pvz. naujausia Ubuntu 22.04, tiesiog Debian ar Fedora)
 Komandinėje eilutėje įvykdžius komandą Linux bus instaliuotas:
 ```
-wsl --install -d Ubuntu 20.04
+wsl --install -d Ubuntu-20.04
 ```
 
 * Alternatyviai, galima Ubuntu 20.04 instaliuoti ir [iš Microsoft Store](https://www.microsoft.com/store/apps/9n6svws3rx71)
