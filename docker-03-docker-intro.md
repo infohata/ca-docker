@@ -5,44 +5,7 @@ https://docs.docker.com/get-docker/
 
 Windows ir Mac siunčiamės Desktop programą, kurią instaliuojame. Linux'ui naudojame serverinę komandinės eilutės versiją. 
 
-!!! Prieš instaliuojant Windows'uose, reikia susitvarkyti Windows Subsistemą Linux'ui. !!!
-
-### WSL2 (Windows Subsystem for Linux v2)
-
-* Atsidarome command prompt (cmd.exe) kaip administratorius
-
-    * Start/Search
-    * įrašome `cmd`
-    * Run as Administrator
-
-* Vykdome komandas, kurios įjungs pagal nutylėjimą neįjungtas Windows funkcijas Windows Subsystem for Linux ir virtualizaciją
-```
-dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-```
-```
-dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-```
-
-Jeigu nepavyko atlikti šių operacijų, reikia nueiti į BIOS ir įjungti virtualizaciją. Dažniausiai BIOS CPU skiltyje bus tokie pasirinkimai kaip SVT, Virtualization, Hyper-V. Reikia įjungti visas. Jeigu AMD Ryzen sistemose atsirado nestabilumas, išjunkite C-State Control. Dabar turėtų pavykti.
-
-Padarius šiuos veiksmus perkraukite kompiuterį.
-
-* Atsisiunčiame WSL [atnaujinimą](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) ir jį instaliuojame
-
-* toliau vykdome komandą
-```
-wsl --set-default-version 2
-```
-
-* Instaliuojame [Ubuntu 20.04 iš Microsoft Store](https://www.microsoft.com/store/apps/9n6svws3rx71)
-Alternatyviai, komandinėje eilutėje galime įrašyti:
-```
-wsl --install -d Ubuntu 20.04
-```
-
-Susikurkite savo vartotojo vardą ir slaptažodį.
-
-* Perkrauname Kompiuterį
+!!! Prieš instaliuojant Windows'uose, reikia susitvarkyti procesoriaus virtualizaciją ir Windows Subsistemą Linux'ui. !!!
 
 ---
 ## Docker Desktop varotojo sąsaja
