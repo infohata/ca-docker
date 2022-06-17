@@ -1,4 +1,4 @@
-### WSL2 (Windows Subsystem for Linux v2)
+# WSL2 (Windows Subsystem for Linux v2)
 
 Aktualu tik Windows'ams. MacOS vartotojai tiesiog naudos Docker'į, o vietinę Linux komandinės eilutės funkcionalumą papildo [MacPorts](https://www.macports.org/) programa. Kurso medžiaga yra paruošta naudojant Windows 10. Netestuota, be turėtų veikti su Windows 8.1 ir Windows 11.
 
@@ -105,12 +105,19 @@ Kol neišmokome vartotojų teisių, apribosime savo veikslus savo namų katalogu
 * `touch failas.txt` sukuria naują failą `failas.txt`.
 * `echo "tekstas faile" >failas.txt` įrašo tekstą į failą iš komandinės eilutės. Čia `echo` komanda yra skirta atkartoti tekstui komandinėje eilutėje, o `>failastxt` nurodo, kad komandinės eilutės išvedimas turėtų eiti ne į ekraną, o į failą.
 * `cat failas.txt` išspausdins failo turinį.
+* `tail failas.txt` išspausdins failo galo (paskutines 10 eilučių) turinį. Aktualu, pvz. peržiūrėti "gyvo" .log failo turinį.
 * `find paieškos_argumentas` - ieškom, pvz. python'o - find `/*/python`.
 
-Sekančiam pavyzdžiui pasiimsim ilgą find: `find /usr/bin/`
-* norint perskaityti failą, ilgesnį negu terminalo aukštis, galime naudoti lygiagrečią komandą `less`. Pvz. `find /usr/bin/ | less` - po rezultatą galime naviguoti kryptyniais klavišais, `page up`/`page down`, `home`/`end` klavišais, ir išeiti su `q` arba `ESCape` klavišu. 
+
+#### find
+Sekančiam pavyzdžiui pasiimsim ilgą find: `find /usr/bin/`.
+* Norint perskaityti failą, ilgesnį negu terminalo aukštis, galime naudoti lygiagrečią komandą `less`. Pvz. `find /usr/bin/ | less` - po rezultatą galime naviguoti kryptyniais klavišais, `page up`/`page down`, `home`/`end` klavišais, ir išeiti su `q` arba `ESCape` klavišu. 
 Ne visose Linux distribucijose būna `less`, bet visose būna primityvesnė funkcijos versija `more`. Su `more` galima tik eiti žemyn spaudžiant `ENTER` (po eilutę) ir tarpo (po puslapį) klavišais.
-* iškoti paieškoje, arba bet kokiame kitame komandinės eilutės rezultate, galime naudojant lygiagrečią `grep`. Ji išskirs eilutes, kuriose bus ieškomas tekstas. Pvz. `find /usr/bin/ | grep python`.
+
+#### grep
+
+Ieškoti paieškoje, arba bet kokiame kitame komandinės eilutės rezultate, galime naudojant lygiagrečią `grep`. Ji išskirs eilutes, kuriose bus ieškomas tekstas. Pvz. `find /usr/bin/ | grep python`.
+grep galima naudoti ir parametrus, palengvinančius paiešką - `-i` raktas nurodo, kad ieškant nekreipti dėmesio į didžiąsias/mažąsias raides, `-n` sunumeruoja rezultato eilutes, o `-C` nurodo, kiek eilučių parodyti prieš/po rezultatą (arba veikia `-B` before, `-A` after.
 
 ---
 ### Katalogų kūrimas, failų/katalogų kopijavimas, perkėlimas, trynimas
@@ -122,7 +129,16 @@ Ne visose Linux distribucijose būna `less`, bet visose būna primityvesnė funk
 * `rm labas2.txt` ištrina failą `labas2.txt`.
 * `rm -r naujas` ištrina visą katalogą naujas. Norint kad neuždavinėtų klausimo trinant kiekvieną failą, reikia nurodyti raktą `-f`.
 
+# Komandų istoriją
 
+Komanda `history` galite pasižiūrėti savo vykdytų komandų istoriją. Sąrašas greičiausiai bus labai ilgas, tai siūlytume naudoti `| tail` pamatyti paskutiniams įrašams, arba `| less` kad valdyti jo išspausdinimą.
+
+# Kompiuterio atminties, paleistų procesų situacija
+
+Pamatyti esamą kompiuterio atminties situaciją galima panaudojant komandą `top`, iš kurios galima bus išeiti paspaudus `q` klavišą.
+![top](img/01/top.png)
+
+Kad "nužudyti" negyvą/pakibusį procesą, galite naudoti komandą `kill -9 pid`, kur PID yra pasirinktas proceso ID (pvz. iš `top` programos lentelės). Jeigu procesą valdo ne jūsų vartotojas, jums reikės `root` teisių - apie jas sekančioje paskaitoje.
 
 ---
 # Užduotys
