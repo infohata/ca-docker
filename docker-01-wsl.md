@@ -47,7 +47,10 @@ wsl --install -d Ubuntu-20.04
 # LINUX komandinė eilutė `bash`
 ![tux](/img/01/tux.avif)
 
-Standartinė daugumoje Linuxų komandinė eilutė yra `bash`. Ją ir naudosime. Bash komandinės eilutės `prompt` (eilutės pradžia) pagal nutylėjimą yra: `vartotojo_vardas@host:katalogas$`
+Standartinė daugumoje Linuxų komandinė eilutė yra `bash`. Ją ir naudosime. Bash komandinės eilutės `prompt` (eilutės pradžia) pagal nutylėjimą yra: 
+``` bash
+vartotojo_vardas@host:katalogas$
+```
 
 ---
 # Pagrindin4s komandos
@@ -65,19 +68,52 @@ kestas@DESKTOP-I0R1OHE:~$ pwd
 /home/kestas
 ```
 
-`cd` komandą naudojame, kad pereiti į kitą katalogą. Galima naudoti absoliutų kelią (prasidedantį `/`, pvz. `cd /home`), reliatyvš kelią (pvz. `cd ../`), arba nuorodą (pvz. `cd ~` nuves Jus į savo vartotojo pagrindinį katalogą `/home/vartotojas`)
+`cd` komandą naudojame, kad pereiti į kitą katalogą. Galima naudoti absoliutų kelią, prasidedantį `/`, pvz.: 
+``` bash
+kestas@DESKTOP-I0R1OHE:~$ cd /home
+kestas@DESKTOP-I0R1OHE:/home$ pwd
+/home
+kestas@DESKTOP-I0R1OHE:/home$ cd /usr/bin
+kestas@DESKTOP-I0R1OHE:/usr/bin$ pwd
+/usr/bin
+```
+
+reliatyvų kelią, pvz.: 
+``` bash
+kestas@DESKTOP-I0R1OHE:/usr/bin$ cd ../
+kestas@DESKTOP-I0R1OHE:/usr$ pwd
+/usr
+kestas@DESKTOP-I0R1OHE:/usr$ cd lib
+kestas@DESKTOP-I0R1OHE:/usr/lib$ pwd
+/usr/lib
+kestas@DESKTOP-I0R1OHE:/usr/lib$ cd ../../home/kestas
+kestas@DESKTOP-I0R1OHE:~$ pwd
+/home/kestas
+kestas@DESKTOP-I0R1OHE:~$ cd ../..
+kestas@DESKTOP-I0R1OHE:/$ pwd
+/
+```
+
+arba nuorodą, pvz.: 
+``` bash
+kestas@DESKTOP-I0R1OHE:/$ cd ~
+kestas@DESKTOP-I0R1OHE:~$ pwd
+/home/kestas
+```
 
 ---
-
 `ls` komanda galima pasižiūrėti katalogo, kuriame esate, turinį.
 
 Prie komandų galima naudoti parametrus ir argumentus. Pvz. `ls -l` su argumentu `-l` galime gauti detalesnį katalogo turinį, o parametras `-a` parodo paslėptus failus. ![ls -la](img/01/ls_minus_la.png)
 
-`Ubuntu` jau kurį laiką palaiko komandą `ll`, kuri atitinka `ls -l`.
+`Ubuntu` jau kurį laiką palaiko komandą `ll`, kuri atitinka `ls -la`.
 
 Komandos argumente galime nurodyti, kurio katalogo turinį norime peržiūrėti. Pvz. `ls -l /` mums parodys detalų pagrindinio sistemos katalogo tuniį. ![ls -l /](img/01/ls_minus_l_root.png)
 
-Linux failų sistema, pavadinimai ir sistemos katalogų išdėstymas ženkliai skiriasi nuo Windows. Visų pirma katalogų medis nebūtinai prasideda diskais ar duomenų saugojimo įrenginiais. Diskai neįvardinti raidėmis (C, D, X...), o iškart įvardijami pagal jų paskirtį arba priskirti katalogui, kurio duomenys saugomi). Pagrindinis katalogas `/` dažniausiai atitinka `C:\` diską Windows'uose, bet nebūtinai.
+
+### Linux failų sistema, pavadinimai ir sistemos katalogų išdėstymas
+
+ženkliai skiriasi nuo Windows. Visų pirma katalogų medis nebūtinai prasideda diskais ar duomenų saugojimo įrenginiais. Diskai neįvardinti raidėmis (C, D, X...), o iškart įvardijami pagal jų paskirtį arba priskirti katalogui, kurio duomenys saugomi). Pagrindinis katalogas `/` dažniausiai atitinka `C:\` diską Windows'uose, bet nebūtinai.
 
 * `bin` kataloge dažniausiai saugomi paleidžiamieji failai. Pavadinimo kilmė - sutrumpintas žodis `binaries`. Anksčiau buvo kelios vietos `bin` failams sistemoje - `sbin`, `usr/bin`... dabar jos visos apjungto į vieną `usr/bin`, o `bin` ir `sbin` yra tiesiog nuorodos.
 
@@ -108,13 +144,14 @@ Kol neišmokome vartotojų teisių, apribosime savo veikslus savo namų katalogu
 * `tail failas.txt` išspausdins failo galo (paskutines 10 eilučių) turinį. Aktualu, pvz. peržiūrėti "gyvo" .log failo turinį.
 * `find paieškos_argumentas` - ieškom, pvz. python'o - find `/*/python`.
 
-
-#### find
 Sekančiam pavyzdžiui pasiimsim ilgą find: `find /usr/bin/`.
-* Norint perskaityti failą, ilgesnį negu terminalo aukštis, galime naudoti lygiagrečią komandą `less`. Pvz. `find /usr/bin/ | less` - po rezultatą galime naviguoti kryptyniais klavišais, `page up`/`page down`, `home`/`end` klavišais, ir išeiti su `q` arba `ESCape` klavišu. 
-Ne visose Linux distribucijose būna `less`, bet visose būna primityvesnė funkcijos versija `more`. Su `more` galima tik eiti žemyn spaudžiant `ENTER` (po eilutę) ir tarpo (po puslapį) klavišais.
+* Norint perskaityti failą, ilgesnį negu terminalo aukštis, galime naudoti lygiagrečią komandą `less`. Pvz.:
+``` bash
+find /usr/bin/ | less
+```
+> Po rezultatą galime naviguoti kryptyniais klavišais, `page up`/`page down`, `home`/`end` klavišais, ir išeiti su `q` arba `ESCape` klavišu. <br> Ne visose Linux distribucijose būna `less`, bet visose būna primityvesnė funkcijos versija `more`. Su `more` galima tik eiti žemyn spaudžiant `ENTER` (po eilutę) ir tarpo (po puslapį) klavišais.
 
-#### grep
+### grep
 
 Ieškoti paieškoje, arba bet kokiame kitame komandinės eilutės rezultate, galime naudojant lygiagrečią `grep`. Ji išskirs eilutes, kuriose bus ieškomas tekstas. Pvz. `find /usr/bin/ | grep python`.
 grep galima naudoti ir parametrus, palengvinančius paiešką - `-i` raktas nurodo, kad ieškant nekreipti dėmesio į didžiąsias/mažąsias raides, `-n` sunumeruoja rezultato eilutes, o `-C` nurodo, kiek eilučių parodyti prieš/po rezultatą (arba veikia `-B` before, `-A` after.
@@ -126,8 +163,9 @@ grep galima naudoti ir parametrus, palengvinančius paiešką - `-i` raktas nuro
 * `cp labas.txt naujas/` - kopijuojame failą `labas.txt` į katalogą `naujas`.
 * `cp labas.txt naujas/labas2.txt` - kopijuojam failą `labas.txt` į katalogą `naujas`, pervadinant jį į `labas2.txt`. 
 * `mv naujas/labas2.txt .` - perkeliame failą labas2.txt iš `naujas` katalogo į mūsų dabartinį katalogą (turėtu būti `~`).
+* `mv naujas senas` - pervadins katalogą `naujas` į katalogą `senas`.
 * `rm labas2.txt` ištrina failą `labas2.txt`.
-* `rm -r naujas` ištrina visą katalogą naujas. Norint kad neuždavinėtų klausimo trinant kiekvieną failą, reikia nurodyti raktą `-f`.
+* `rm -r senas` ištrina visą katalogą. Norint kad neuždavinėtų klausimo trinant kiekvieną failą, reikia nurodyti raktą `-f`.
 
 # Komandų istoriją
 
@@ -138,8 +176,11 @@ Komanda `history` galite pasižiūrėti savo vykdytų komandų istoriją. Sąra�
 Pamatyti esamą kompiuterio atminties situaciją galima panaudojant komandą `top`, iš kurios galima bus išeiti paspaudus `q` klavišą.
 ![top](img/01/top.png)
 
+Alternatyviai, procesų sąrašą galima pasižiūrėti `ps` komanda. `-a` raktas parodys ir kitų vartotojų procesus. `-A` parodys dar pridės ir sistemos procesais `-l` parodys išplėstą lentelę su procesų parametrais.
+
+
 Kad "nužudyti" negyvą/pakibusį procesą, galite naudoti komandą `kill -9 pid`, kur PID yra pasirinktas proceso ID (pvz. iš `top` programos lentelės). Jeigu procesą valdo ne jūsų vartotojas, jums reikės `root` teisių - apie jas sekančioje paskaitoje.
 
 ---
 # Užduotys
-* 
+*  
