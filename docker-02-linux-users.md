@@ -8,7 +8,7 @@ Pakeisti failo prieigos teises galima komanda `chmod 666 labas.txt`. Šiuo atvej
 
 Išbandykime execute privilegiją - sukurkime python poemos failą, pakeiskime jo privilegijas į execute, ir paleiskime jį:
 ``` bash
-echo '#!/usr/bin/env python
+echo '#!/usr/bin/env python3
 import this
 ' >poem.py
 chmod 775 poem.py
