@@ -59,7 +59,8 @@ Simbolinės nuorodos leidžia pasiekti tą patį kelią iš kito kelio. Simbolin
 `ln -s taikinys nuoroda` komanda galime sukurti nuorodą. pvz. iš vartotojo naujas sukursime nuorodą į tekstinį failą `/home/kestas/labas.txt`:
 ``` bash
 cd ~
-ln -s /home/kestas/labas.txt labas.txtnaujas@DESKTOP-I0R1OHE:~$ ls -l
+ln -s /home/kestas/labas.txt labas.txt
+naujas@DESKTOP-I0R1OHE:~$ ls -l
 total 0
 lrwxrwxrwx 1 naujas naujas 22 Jun 17 11:19 labas.txt -> /home/kestas/labas.txt
 ```
