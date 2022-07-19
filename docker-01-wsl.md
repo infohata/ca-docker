@@ -53,7 +53,7 @@ vartotojo_vardas@host:katalogas$
 ```
 
 ---
-# Pagrindin4s komandos
+# Pagrindinės komandos
 
 `help` galima gauti sąrašą galimų `bash` komandų, bet 
 
