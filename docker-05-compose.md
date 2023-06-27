@@ -110,11 +110,7 @@ services:       # services yra konteinerių sąrašas
     stdin_open: true
     # restart komanda nurodo sąlygas, kada perkrauti konteinerį jam išsijungus. Produkcinėje aplinkoje tai turėtų būti always. 
     restart: always
-    # kokias komandas vykdyti paleidžiant konteinerį. Šios eilutės nereikia, jeigu Dockerfile yra COMMAND.
-    # command: >
-    #   bash -c "./projektas/manage.py migrate &&
-    #            ./projektas/manage.py runserver 0.0.0.0:8000"
-    # # tinklo konfigūracija
+    # tinklo konfigūracija
     ports:
       - 8000:8000
     # volumes - disko sąsaja, kur konteineris sinchronizuos savo failus su realiais diske esančiais failais. Šių failų nereikės kopijuoti su cp. Taip pat panašiai sinchronizuosime ir `static` bei `media` katalogus su nginx konteineriu.
