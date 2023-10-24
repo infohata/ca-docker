@@ -55,7 +55,7 @@ vartotojo_vardas@host:katalogas$
 ---
 # Pagrindinės komandos
 
-`help` galima gauti sąrašą galimų `bash` komandų, bet 
+`help` galima gauti sąrašą galimų `bash` komandų, bet tai nėra išpildyta vartotojui suprantama kalba.
 
 `clear` komanda išvalo ekraną
 
