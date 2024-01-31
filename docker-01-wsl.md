@@ -1,6 +1,6 @@
 # WSL2 (Windows Subsystem for Linux v2)
 
-Aktualu tik Windows'ams. MacOS vartotojai tiesiog naudos Docker'į, o vietinę Linux komandinės eilutės funkcionalumą papildo [MacPorts](https://www.macports.org/) programa. Kurso medžiaga yra paruošta naudojant Windows 10. Netestuota, be turėtų veikti su Windows 8.1 ir Windows 11.
+Aktualu tik Windows'ams. MacOS vartotojai tiesiog naudos Docker'į, o vietinę Linux komandinės eilutės funkcionalumą papildo [MacPorts](https://www.macports.org/) programa. Kurso medžiaga yra paruošta naudojant Windows 10. Netestuota, bet turėtų veikti su Windows 8.1 ir Windows 11.
 
 * Pasižiūrime ar mūsų procesorius palaiko virtializaciją, naudodami Task Manager. Atsidarykite Performance --> CPU ir apačioje dešinėje yra `Virtualization` parametras. Jis turi būti įjungtas. 
 ![Task Manager, Performance, CPU, Virtualizacija](img/01/task-manager.png).
