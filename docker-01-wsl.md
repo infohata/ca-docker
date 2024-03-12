@@ -167,7 +167,7 @@ grep galima naudoti ir parametrus, palengvinančius paiešką - `-i` raktas nuro
 * `rm labas2.txt` ištrina failą `labas2.txt`.
 * `rm -r senas` ištrina visą katalogą. Norint kad neuždavinėtų klausimo trinant kiekvieną failą, reikia nurodyti raktą `-f`.
 
-# Komandų istoriją
+# Komandų istorija
 
 Komanda `history` galite pasižiūrėti savo vykdytų komandų istoriją. Sąrašas greičiausiai bus labai ilgas, tai siūlytume naudoti `| tail` pamatyti paskutiniams įrašams, arba `| less` kad valdyti jo išspausdinimą.
 

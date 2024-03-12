@@ -34,7 +34,7 @@ WORKDIR /app
 Instrukcija nukopijuoti į konteinerį projekto failus, kur projekto katalogo pavadinimas šiuo atveju yra `project`. Pakeiskite `project` į savo projekto pavadinimą:
 
 ``` Dockerfile
-COPY ./project .
+COPY ./project/ .
 COPY ./requirements.txt .
 ```
 
